@@ -1,3 +1,5 @@
+#![allow(incomplete_features)]
+#![feature(generic_const_exprs)]
 #![cfg_attr(not(feature = "std"), no_std)]
 
 pub mod error;
@@ -7,7 +9,7 @@ use core::{
     ops::{Deref, DerefMut},
 };
 
-use embedded_hal::blocking::i2c::{Read, Write};
+use embedded_hal::blocking::i2c::{Write, WriteRead};
 
 use bitfield::bitfield;
 use error::AirqualityConvError;
@@ -55,12 +57,13 @@ const ENS160_GPR_READ_REG: u8 = 0x48;
 /// A driver for the `ENS160` sensor connected with I2C to the host.
 pub struct Ens160<I2C> {
     i2c: I2C,
+    address: u8,
 }
 
 impl<I2C> Ens160<I2C> {
     /// Creates a new sensor driver.
-    pub fn new(i2c: I2C) -> Self {
-        Self { i2c }
+    pub fn new(i2c: I2C, address: u8) -> Self {
+        Self { i2c, address }
     }
 
     /// Releases the underlying I2C bus and destroys the driver.
@@ -71,7 +74,7 @@ impl<I2C> Ens160<I2C> {
 
 impl<I2C, E> Ens160<I2C>
 where
-    I2C: Read<Error = E> + Write<Error = E>,
+    I2C: WriteRead<Error = E> + Write<Error = E>,
 {
     /// Returns the sensors part id.
     pub fn get_part_id(&mut self) -> Result<u16, E> {
@@ -147,13 +150,22 @@ where
     }
 
     fn read_register<const N: usize>(&mut self, register: u8) -> Result<[u8; N], E> {
+        let mut write_buffer = [0u8; N];
+        write_buffer[0] = register;
         let mut buffer = [0u8; N];
-        self.i2c.read(register, &mut buffer)?;
+        self.i2c
+            .write_read(self.address, &write_buffer, &mut buffer)?;
         Ok(buffer)
     }
 
-    fn write_register<const N: usize>(&mut self, register: u8, data: [u8; N]) -> Result<(), E> {
-        self.i2c.write(register, &data)
+    fn write_register<const N: usize>(&mut self, register: u8, data: [u8; N]) -> Result<(), E>
+    where
+        [(); N + 1]: Sized,
+    {
+        let mut final_buffer = [0u8; (N + 1)];
+        final_buffer[0] = register;
+        final_buffer[1..].copy_from_slice(&data);
+        self.i2c.write(self.address, &final_buffer)
     }
 }
 
