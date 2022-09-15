@@ -1,5 +1,5 @@
 [package]
-name = "ens160-i2c"
+name = "ens160"
 version = "0.1.0"
 edition = "2021"
 authors = ["Alexander Hübener <alex.teamplayer@gmail.com>"]
