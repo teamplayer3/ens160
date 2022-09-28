@@ -37,8 +37,6 @@ const ENS160_DATA_AQI_REG: u8 = 0x21;
 const ENS160_DATA_TVOC_REG: u8 = 0x22;
 // This 2-byte register reports the calculated equivalent CO2-concentration in ppm, based on the detected VOCs and hydrogen.
 const ENS160_DATA_ECO2_REG: u8 = 0x24;
-// This 2-byte register reports the calculated ethanol concentration in ppb.
-const ENS160_DATA_ETOH_REG: u8 = 0x22;
 // This 2-byte register reports the temperature used in its calculations (taken from TEMP_IN, if supplied).
 const ENS160_DATA_T_REG: u8 = 0x30;
 // This 2-byte register reports the relative humidity used in its calculations (taken from RH_IN if supplied).
@@ -107,19 +105,13 @@ where
             .map(ECo2::from)
     }
 
-    /// Reads the ethanol measurement in `ppb`.
-    pub fn get_ethanol(&mut self) -> Result<u16, E> {
-        self.read_register::<2>(ENS160_DATA_ETOH_REG)
-            .map(u16::from_be_bytes)
-    }
-
     /// Returns the previous set temperature and humidity.
     ///
     /// Values can be set with [`Ens160::set_temp_and_hum()`].
     pub fn get_temp_and_hum(&mut self) -> Result<(f32, f32), E> {
         let buffer = self.read_register::<4>(ENS160_DATA_T_REG)?;
-        let temp = u16::from_le_bytes([buffer[0], buffer[1]]);
-        let rh = u16::from_le_bytes([buffer[2], buffer[3]]);
+        let temp = u16::from_be_bytes([buffer[0], buffer[1]]);
+        let rh = u16::from_be_bytes([buffer[2], buffer[3]]);
 
         let temp = ((temp as f32) - 0.5) / 64.0 - 273.15;
         let hum = ((rh as f32) - 0.5) / 512.0;
