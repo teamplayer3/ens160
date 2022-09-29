@@ -1,5 +1,5 @@
-#![allow(incomplete_features)]
-#![feature(generic_const_exprs)]
+// #![allow(incomplete_features)]
+// #![feature(generic_const_exprs)]
 #![cfg_attr(not(feature = "std"), no_std)]
 
 pub mod error;
@@ -121,12 +121,12 @@ where
 
     /// Sets the opration mode of the sensor.
     pub fn set_operation_mode(&mut self, mode: OperationMode) -> Result<(), E> {
-        self.write_register::<1>(ENS160_OPMODE_REG, [mode as u8])
+        self.write_register([ENS160_OPMODE_REG, mode as u8])
     }
 
     /// Sets the interrupt configuration.
     pub fn set_interrupt_config(&mut self, config: InterruptConfig) -> Result<(), E> {
-        self.write_register(ENS160_CONFIG_REG, [config.finish().0])
+        self.write_register([ENS160_CONFIG_REG, config.finish().0])
     }
 
     /// Sets the temperature (°C) and humidity (%rh (relative Humidity in percent)) for calculations.
@@ -137,8 +137,8 @@ where
         let temp = temp.to_le_bytes();
         let rh = rh.to_le_bytes();
 
-        let buffer = [temp[0], temp[1], rh[0], rh[1]];
-        self.write_register(ENS160_TEMP_IN_REG, buffer)
+        let buffer = [ENS160_TEMP_IN_REG, temp[0], temp[1], rh[0], rh[1]];
+        self.write_register(buffer)
     }
 
     fn read_register<const N: usize>(&mut self, register: u8) -> Result<[u8; N], E> {
@@ -150,14 +150,8 @@ where
         Ok(buffer)
     }
 
-    fn write_register<const N: usize>(&mut self, register: u8, data: [u8; N]) -> Result<(), E>
-    where
-        [(); N + 1]: Sized,
-    {
-        let mut final_buffer = [0u8; (N + 1)];
-        final_buffer[0] = register;
-        final_buffer[1..].copy_from_slice(&data);
-        self.i2c.write(self.address, &final_buffer)
+    fn write_register<const N: usize>(&mut self, buffer: [u8; N]) -> Result<(), E> {
+        self.i2c.write(self.address, &buffer)
     }
 }
 
