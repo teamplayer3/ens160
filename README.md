@@ -16,6 +16,9 @@ let i2c = ...; // I2C bus to use
 
 let mut device = Ens160::new(i2c);
 device.reset().unwrap();
+sleep(250)
+device.operational().unwrap();
+sleep(50)
 
 loop {
     if let Ok(status) = device.status() {
