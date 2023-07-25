@@ -150,31 +150,34 @@ where
     /// and a humidity value of 5025 represents 50.25% RH.
     ///
     /// These values can be set using [`Ens160::set_temp_and_hum()`].
-    pub fn temp_and_hum(&mut self) -> Result<(u16, u16), E> {
+    pub fn temp_and_hum(&mut self) -> Result<(i16, u16), E> {
         let buffer = self.read_register::<4>(ENS160_DATA_T_REG)?;
         let temp = u16::from_le_bytes([buffer[0], buffer[1]]);
         let rh = u16::from_le_bytes([buffer[2], buffer[3]]);
 
-        let temp = temp as u32 * 100 / 64 - 27315;
+        let temp = temp as i32 * 100 / 64 - 27315;
         let hum = rh as u32 * 100 / 512;
 
-        Ok((temp as u16, hum as u16))
+        Ok((temp as i16, hum as u16))
     }
 
-    /// Sets the temperature and relative humidity values used in the device's calculations.
+    /// Sets the temperature value used in the device's calculations.
     ///
-    /// The units are scaled by 100. For example, a temperature value of 2550 should be used for 25.50 °C,
-    /// and a humidity value of 5025 for 50.25% RH.
-    pub fn set_temp_and_hum(&mut self, ambient_temp: u16, relative_humidity: u16) -> Result<(), E> {
-        let temp = ((ambient_temp as u32 + 27315) * 64 / 100) as u16;
-        let rh = (relative_humidity as u32 * 512 / 100) as u16;
-
+    /// Unit is scaled by 100. For example, a temperature value of 2550 should be used for 25.50 °C.
+    pub fn set_temp(&mut self, ambient_temp: i16) -> Result<(), E> {
+        let temp = ((ambient_temp as i32 + 27315) * 64 / 100) as u16;
         let temp = temp.to_le_bytes();
-        let rh = rh.to_le_bytes();
-
         let tbuffer = [ENS160_TEMP_IN_REG, temp[0], temp[1]];
+        self.write_register(tbuffer)
+    }
+
+    /// Sets the relative humidity value used in the device's calculations.
+    ///
+    /// Unit is scaled by 100. For example, a humidity value of 5025 should be used for 50.25% RH.
+    pub fn set_hum(&mut self, relative_humidity: u16) -> Result<(), E> {
+        let rh = (relative_humidity as u32 * 512 / 100) as u16;
+        let rh = rh.to_le_bytes();
         let hbuffer = [ENS160_RH_IN_REG, rh[0], rh[1]];
-        self.write_register(tbuffer)?;
         self.write_register(hbuffer)
     }
 
