@@ -79,6 +79,13 @@ where
         self.write_register([ENS160_OPMODE_REG, OperationMode::Reset as u8])
     }
 
+    /// Switches the device to idle mode.
+    ///
+    /// Only in idle mode operations with `ENS160_COMMAND_REG` can be performed.
+    pub fn idle(&mut self) -> Result<(), E> {
+        self.write_register([ENS160_OPMODE_REG, OperationMode::Idle as u8])
+    }
+
     /// Switches the device to deep sleep mode.
     ///
     /// This function can be used to conserve power when the device is not in use.
