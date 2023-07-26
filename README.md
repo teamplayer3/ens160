@@ -15,10 +15,23 @@ For more information about the sensor [here](https://wiki.dfrobot.com/SKU_SEN051
 let i2c = ...; // I2C bus to use
 
 let mut device = Ens160::new(i2c);
-let tvoc = device.get_tvoc().unwrap();
-let eco2 = device.get_eco2().unwrap();
+device.reset().unwrap();
+sleep(250)
+device.operational().unwrap();
+sleep(50)
 
-let airquality_index = AirqualityIndex::try_from(eco2).unwrap();
+loop {
+    if let Ok(status) = device.status() {
+        if status.data_is_ready() {
+            let tvoc = device.tvoc().unwrap();
+            let eco2 = device.eco2().unwrap();
+            // from eCO2
+            let airquality_index = AirqualityIndex::try_from(eco2).unwrap();
+            // directly
+            let airquality_index = device.airquality_index().unwrap();
+        }
+    }
+}
 
 let i2c = device.release(); // destruct driver to use bus with other drivers
 ```
