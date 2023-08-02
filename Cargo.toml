@@ -15,5 +15,5 @@ default = ["std"]
 std = []
 
 [dependencies]
-embedded-hal = "0.2.7"
+embedded-hal = "1.0.0-alpha.10"
 bitfield = "0.14.0"

@@ -9,7 +9,7 @@ use core::{
     ops::{Deref, DerefMut},
 };
 
-use embedded_hal::blocking::i2c::{Write, WriteRead};
+use embedded_hal::i2c::I2c;
 
 use bitfield::bitfield;
 use error::AirqualityConvError;
@@ -72,7 +72,7 @@ impl<I2C> Ens160<I2C> {
 
 impl<I2C, E> Ens160<I2C>
 where
-    I2C: WriteRead<Error = E> + Write<Error = E>,
+    I2C: I2c<Error = E>,
 {
     /// Resets the device.
     pub fn reset(&mut self) -> Result<(), E> {
