@@ -1,6 +1,6 @@
 [package]
 name = "ens160"
-version = "0.4.0"
+version = "0.4.1"
 edition = "2021"
 authors = ["Alexander Hübener <alex.teamplayer@gmail.com>"]
 repository = "https://github.com/teamplayer3/ens160.git"
