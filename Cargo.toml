@@ -19,3 +19,4 @@ async = ["dep:embedded-hal-async"]
 embedded-hal = "1.0.0-rc.3"
 embedded-hal-async = { version = "=1.0.0-rc.3", optional = true }
 bitfield = "0.14.0"
+maybe-async-cfg = "0.2.3"
