@@ -26,9 +26,9 @@ loop {
             let tvoc = device.tvoc().unwrap();
             let eco2 = device.eco2().unwrap();
             // from eCO2
-            let airquality_index = AirqualityIndex::try_from(eco2).unwrap();
+            let air_quality_index = AirQualityIndex::try_from(eco2).unwrap();
             // directly
-            let airquality_index = device.airquality_index().unwrap();
+            let air_quality_index = device.air_quality_index().unwrap();
         }
     }
 }

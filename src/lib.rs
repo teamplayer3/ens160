@@ -150,7 +150,7 @@ where
     /// Returns the current Air Quality Index (AQI) reading from the sensor.
     ///
     /// The AQI is calculated based on the current sensor readings.
-    pub async fn airquality_index(&mut self) -> Result<AirQualityIndex, E> {
+    pub async fn air_quality_index(&mut self) -> Result<AirQualityIndex, E> {
         self.read_register::<1>(ENS160_DATA_AQI_REG)
             .await
             .map(|v| AirQualityIndex::from(v[0] & 0x07))
