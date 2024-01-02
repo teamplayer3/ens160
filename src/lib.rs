@@ -15,7 +15,7 @@ use embedded_hal::i2c::I2c;
 use embedded_hal_async::i2c::I2c as AsyncI2c;
 
 use bitfield::bitfield;
-use error::AirqualityConvError;
+use error::AirQualityConvError;
 
 // ENS160 Register address
 // This 2-byte register contains the part number in little endian of the ENS160.
@@ -150,10 +150,10 @@ where
     /// Returns the current Air Quality Index (AQI) reading from the sensor.
     ///
     /// The AQI is calculated based on the current sensor readings.
-    pub async fn airquality_index(&mut self) -> Result<AirqualityIndex, E> {
+    pub async fn airquality_index(&mut self) -> Result<AirQualityIndex, E> {
         self.read_register::<1>(ENS160_DATA_AQI_REG)
             .await
-            .map(|v| AirqualityIndex::from(v[0] & 0x07))
+            .map(|v| AirQualityIndex::from(v[0] & 0x07))
     }
 
     /// Returns the Total Volatile Organic Compounds (TVOC) measurement from the sensor.
@@ -383,7 +383,7 @@ impl InterruptConfig {
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(u8)]
-pub enum AirqualityIndex {
+pub enum AirQualityIndex {
     Excellent = 1,
     Good = 2,
     Moderate = 3,
@@ -391,7 +391,7 @@ pub enum AirqualityIndex {
     Unhealthy = 5,
 }
 
-impl From<u8> for AirqualityIndex {
+impl From<u8> for AirQualityIndex {
     fn from(i: u8) -> Self {
         match i {
             1 => Self::Excellent,
@@ -413,8 +413,8 @@ impl From<u16> for ECo2 {
     }
 }
 
-impl TryFrom<ECo2> for AirqualityIndex {
-    type Error = AirqualityConvError;
+impl TryFrom<ECo2> for AirQualityIndex {
+    type Error = AirQualityConvError;
 
     fn try_from(e: ECo2) -> Result<Self, Self::Error> {
         let value = e.0;
@@ -424,7 +424,7 @@ impl TryFrom<ECo2> for AirqualityIndex {
             800..=999 => Ok(Self::Moderate),
             1000..=1499 => Ok(Self::Poor),
             1500..=u16::MAX => Ok(Self::Unhealthy),
-            _ => Err(AirqualityConvError(value)),
+            _ => Err(AirQualityConvError(value)),
         }
     }
 }
