@@ -35,7 +35,9 @@ jobs:
           toolchain: stable
       - uses: actions/cache@v4
         with:
-          path: ~/target
+          path: |
+              ~/.cargo
+              ./target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - run: cargo check --no-default-features --features=${{ matrix.features}}
 
@@ -53,7 +55,9 @@ jobs:
           components: clippy
       - uses: actions/cache@v4
         with:
-          path: ~/target
+          path: |
+            ~/.cargo
+            ./target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - run: cargo clippy --no-default-features --features=${{ matrix.features}}
 
@@ -70,6 +74,8 @@ jobs:
           toolchain: stable
       - uses: actions/cache@v4
         with:
-          path: ~/target
+          path: |
+            ~/.cargo
+            ./target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - run: cargo test --no-default-features --features=${{ matrix.features}}
