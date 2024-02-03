@@ -9,62 +9,55 @@ on:
     paths: ["**/*.rs", "**/Cargo.toml", "**/Cargo.lock"]
 
 jobs:
-  check:
-    name: Check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: check
-
-  test:
-    name: Test Suite
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
 
   fmt:
     name: Rustfmt
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           toolchain: stable
-          override: true
+          components: rustfmt
       - run: rustup component add rustfmt
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+      - run: cargo fmt -- --check
 
-  clippy:
-    name: Clippy
+  check:
+    name: Check
+    strategy:
+      matrix:
+        features: ["", "std", "async", "std,async"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           toolchain: stable
-          override: true
-      - run: rustup component add clippy
-      - uses: actions-rs/cargo@v1
+      - run: cargo check --no-default-features --features=${{ matrix.features}}
+
+  clippy:
+    name: Clippy
+    strategy:
+      matrix:
+        features: ["", "std", "async", "std,async"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          command: clippy
-          args: -- -D warnings
+          toolchain: stable
+          components: clippy
+      - run: cargo clippy --no-default-features --features=${{ matrix.features}}
+
+  test:
+    name: Test Suite
+    strategy:
+      matrix:
+        features: ["", "std", "async", "std,async"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+      - run: cargo test --no-default-features --features=${{ matrix.features}}
