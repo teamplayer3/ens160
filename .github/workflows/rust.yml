@@ -36,7 +36,6 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: "build-cache"
-          save-if: ${{ github.ref == 'refs/heads/master' }}
       - run: cargo check --no-default-features --features=${{ matrix.features}}
 
   clippy:
@@ -54,7 +53,6 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: "build-cache"
-          save-if: ${{ github.ref == 'refs/heads/master' }}
       - run: cargo clippy --no-default-features --features=${{ matrix.features}}
 
   test:
@@ -71,5 +69,4 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: "build-cache"
-          save-if: ${{ github.ref == 'refs/heads/master' }}
       - run: cargo test --no-default-features --features=${{ matrix.features}}
