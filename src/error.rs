@@ -1,5 +1,5 @@
 #[derive(Debug)]
-pub struct AirQualityConvError(pub(crate) u16);
+pub struct AirQualityConvError(pub u16);
 
 #[cfg(feature = "std")]
 impl std::fmt::Display for AirQualityConvError {
