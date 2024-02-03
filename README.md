@@ -9,6 +9,16 @@ Implementation of an ENS160 sensor driver written in rust. This sensor can measu
 
 For more information about the sensor [here](https://wiki.dfrobot.com/SKU_SEN0515_Fermion_ENS160_Air_Quality_Sensor).
 
+## Usage
+
+To use this crate in a `no-std` environment, add it to your `Cargo.toml` as follows:
+
+```toml
+[dependencies.ens160]
+version = "0.6"
+default-features = false
+```
+
 ## Example
 
 ```rust
