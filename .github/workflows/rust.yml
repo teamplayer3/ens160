@@ -1,12 +1,12 @@
 name: Rust
 
 on:
-  push:
-    branches: [main]
-    paths: ["**/*.rs", "**/Cargo.toml", "**/Cargo.lock", ".github/*.yml"]
-  pull_request:
-    branches: [main]
-    paths: ["**/*.rs", "**/Cargo.toml", "**/Cargo.lock"]
+  push
+#     branches: [main]
+#     paths: ["**/*.rs", "**/Cargo.toml", "**/Cargo.lock", ".github/*.yml"]
+#   pull_request:
+#     branches: [main]
+#     paths: ["**/*.rs", "**/Cargo.toml", "**/Cargo.lock"]
 
 jobs:
 
