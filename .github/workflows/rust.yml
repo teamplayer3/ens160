@@ -3,7 +3,7 @@ name: Rust
 on:
   push:
     branches: [main]
-    paths: ["**/*.rs", "**/Cargo.toml", "**/Cargo.lock"]
+    paths: ["**/*.rs", "**/Cargo.toml", "**/Cargo.lock", ".gihub/*"]
   pull_request:
     branches: [main]
     paths: ["**/*.rs", "**/Cargo.toml", "**/Cargo.lock"]
