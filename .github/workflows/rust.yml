@@ -34,7 +34,8 @@ jobs:
         with:
           toolchain: stable
       - uses: Swatinem/rust-cache@v2
-        # with:
+        with:
+          shared-key: "build-cache"
         #   save-if: ${{ github.ref == 'refs/heads/master' }}
       - run: cargo check --no-default-features --features=${{ matrix.features}}
 
@@ -51,7 +52,8 @@ jobs:
           toolchain: stable
           components: clippy
       - uses: Swatinem/rust-cache@v2
-        # with:
+        with:
+          shared-key: "build-cache"
         #   save-if: ${{ github.ref == 'refs/heads/master' }}
       - run: cargo clippy --no-default-features --features=${{ matrix.features}}
 
@@ -67,6 +69,7 @@ jobs:
         with:
           toolchain: stable
       - uses: Swatinem/rust-cache@v2
-        # with:
+        with:
+          shared-key: "build-cache"
         #   save-if: ${{ github.ref == 'refs/heads/master' }}
       - run: cargo test --no-default-features --features=${{ matrix.features}}
