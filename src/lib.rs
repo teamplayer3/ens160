@@ -17,6 +17,9 @@ use embedded_hal_async::i2c::I2c as AsyncI2c;
 use bitfield::bitfield;
 use error::AirQualityConvError;
 
+#[cfg(feature = "defmt")]
+use defmt::Format;
+
 // ENS160 Register address
 // This 2-byte register contains the part number in little endian of the ENS160.
 const ENS160_PART_ID_REG: u8 = 0x00;
@@ -270,6 +273,7 @@ bitfield! {
 
 // #[derive(BitfieldSpecifier)]
 #[derive(Debug, Clone, Copy)]
+#[cfg_attr(feature = "defmt", derive(Format))]
 pub enum Validity {
     NormalOperation,
     WarmupPhase,
@@ -291,6 +295,7 @@ impl From<u8> for Validity {
 
 bitfield! {
     #[derive(Default)]
+    #[cfg_attr(feature = "defmt", derive(Format))]
     struct InterruptRegister(u8);
     impl Debug;
     from into InterruptState, _, set_interrupt_state: 6, 6;
@@ -302,6 +307,7 @@ bitfield! {
 
 // #[derive(BitfieldSpecifier)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "defmt", derive(Format))]
 pub enum PinMode {
     OpenDrain,
     PushPull,
@@ -327,6 +333,7 @@ impl From<u8> for PinMode {
 
 // #[derive(BitfieldSpecifier)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "defmt", derive(Format))]
 pub enum InterruptState {
     ActiveLow,
     ActiveHigh,
@@ -351,6 +358,7 @@ impl From<u8> for InterruptState {
 }
 
 #[derive(Debug, Default)]
+#[cfg_attr(feature = "defmt", derive(Format))]
 pub struct InterruptConfig(InterruptRegister);
 
 impl InterruptConfig {
@@ -382,6 +390,7 @@ impl InterruptConfig {
 }
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "defmt", derive(Format))]
 #[repr(u8)]
 pub enum AirQualityIndex {
     Excellent = 1,
@@ -405,6 +414,7 @@ impl From<u8> for AirQualityIndex {
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "defmt", derive(Format))]
 pub struct ECo2(u16);
 
 impl From<u16> for ECo2 {
